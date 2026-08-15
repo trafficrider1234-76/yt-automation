@@ -35,7 +35,8 @@ def fetch_channel_videos():
         'extract_flat': True,
         'skip_download': True,
         'socket_timeout': 60,
-        'cookies': 'cookies.txt', # Yahan bhi cookies add ki gayi hain
+        'cookies': 'cookies.txt',
+        'js_runtimes': {'node': {}}, # Node.js runtime enable kiya gaya hai
     }
     with YoutubeDL(ydl_opts) as ydl:
         try:
@@ -58,7 +59,8 @@ def process_and_upload(video_url, title):
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4/best',
         'outtmpl': 'source_video.mp4',
         'noplaylist': True,
-        'cookies': 'cookies.txt', # Download ke liye cookies pass ki gayi hain
+        'cookies': 'cookies.txt',
+        'js_runtimes': {'node': {}}, # Node.js runtime enable kiya gaya hai
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
