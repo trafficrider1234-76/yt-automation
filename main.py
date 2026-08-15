@@ -83,6 +83,15 @@ def build_ydl_opts(extra_opts=None):
         # the yt-dlp-ejs package isn't bundled with your install. Safe to
         # leave enabled even if you also install yt-dlp[default].
         'remote_components': {'ejs': 'github'},
+        # android_vr (yt-dlp's default fallback client in some cases) does
+        # NOT support cookies at all, so it always hits the bot-check wall
+        # regardless of whether your cookies are valid. Force clients that
+        # actually send cookies along with the request.
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['web', 'tv'],
+            }
+        },
         'user_agent': (
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
             '(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
