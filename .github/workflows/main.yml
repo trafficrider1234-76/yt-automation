@@ -34,6 +34,7 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: |
+          export PATH=$PATH:$(which node)
           python main.py
 
       - name: Commit and push state update
