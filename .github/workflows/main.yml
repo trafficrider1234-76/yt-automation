@@ -18,6 +18,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Yeh naya block add karein (Node.js install karne ke liye)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
