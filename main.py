@@ -8,8 +8,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Configuration (/shorts ki jagah /videos use karein taaki 404 error na aaye)
-CHANNEL_URL = "https://www.youtube.com/@MysteryRecapped/videos"
+# Configuration (Channel ka direct videos playlist URL use karein)
+CHANNEL_URL = "https://www.youtube.com/playlist?list=UULF_W63SgiubucAOXjKPLJAxA" # MysteryRecapped upload playlist
 QUEUE_FILE = "queue.json"
 STATE_FILE = "last_processed.txt"
 OUTPUT_VIDEO = "final_short.mp4"
