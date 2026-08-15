@@ -8,8 +8,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Configuration
-CHANNEL_URL = "https://www.youtube.com/@MysteryRecapped/shorts" # Yahan target channel ka link dein
+# Configuration (/shorts ki jagah /videos use karein taaki 404 error na aaye)
+CHANNEL_URL = "https://www.youtube.com/@MysteryRecapped/videos"
 QUEUE_FILE = "queue.json"
 STATE_FILE = "last_processed.txt"
 OUTPUT_VIDEO = "final_short.mp4"
@@ -32,20 +32,24 @@ def get_youtube_service():
 
 def fetch_channel_videos():
     ydl_opts = {
-        'extract_flat': True,
+        'extract_flat': 'in_playlist',
         'skip_download': True,
+        'socket_timeout': 30,
     }
     with YoutubeDL(ydl_opts) as ydl:
-        result = ydl.extract_info(CHANNEL_URL, download=False)
-        if 'entries' in result:
-            # Purani se nayi video (Oldest to Newest) ke liye reverse karein
-            videos = [entry['url'] for entry in result['entries']]
-            videos.reverse()
-            return videos
+        try:
+            result = ydl.extract_info(CHANNEL_URL, download=False)
+            if 'entries' in result:
+                videos = [entry['url'] for entry in result['entries'] if entry.get('url')]
+                # Purani se nayi video (Oldest to Newest) ke liye reverse karein
+                videos.reverse()
+                return videos
+        except Exception as e:
+            print(f"Error fetching channel: {e}")
     return []
 
 async def generate_voiceover(text):
-    communicate = edge_tts.Communicate(text, "en-US-AriaNeural") # Aap voice change kar sakte hain
+    communicate = edge_tts.Communicate(text, "en-US-AriaNeural")
     await communicate.save(OUTPUT_AUDIO)
 
 def process_and_upload(video_url, title):
@@ -58,7 +62,7 @@ def process_and_upload(video_url, title):
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
 
-    # Voiceover text (Aap ise customize ya dynamic kar sakte hain)
+    # Voiceover text
     voice_text = "Check out this incredible story! Watch till the end."
     asyncio.run(generate_voiceover(voice_text))
 
