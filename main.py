@@ -3,7 +3,10 @@ import json
 import asyncio
 import subprocess
 from yt_dlp import YoutubeDL
-from moviepy.editor import VideoFileClip, AudioFileClip
+# moviepy >= 2.0 removed the `moviepy.editor` namespace — import directly
+# from `moviepy` instead. If you're on moviepy 1.x, use
+# `from moviepy.editor import VideoFileClip, AudioFileClip` instead.
+from moviepy import VideoFileClip, AudioFileClip
 import edge_tts
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -142,10 +145,12 @@ def process_and_upload(video_url, title):
 
     print("Editing video with MoviePy...")
     source_clip = VideoFileClip("source_video.mp4")
-    video = source_clip.subclip(0, min(58, source_clip.duration))
+    # moviepy 2.x renamed .subclip() -> .subclipped() and
+    # .set_audio() -> .with_audio(). If you pin moviepy<2.0, swap these back.
+    video = source_clip.subclipped(0, min(58, source_clip.duration))
     audio = AudioFileClip(OUTPUT_AUDIO)
 
-    final_clip = video.set_audio(audio)
+    final_clip = video.with_audio(audio)
     final_clip.write_videofile(OUTPUT_VIDEO, codec="libx264", audio_codec="aac", fps=30)
 
     source_clip.close()
