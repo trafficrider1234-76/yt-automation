@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+import subprocess
 from yt_dlp import YoutubeDL
 from moviepy.editor import VideoFileClip, AudioFileClip
 import edge_tts
@@ -22,6 +23,14 @@ CLIENT_ID = os.environ.get("YT_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("YT_CLIENT_SECRET")
 REFRESH_TOKEN = os.environ.get("YT_REFRESH_TOKEN")
 
+def get_deno_path():
+    try:
+        result = subprocess.run(['which', 'deno'], capture_output=True, text=True)
+        path = result.stdout.strip()
+        return path if path else '/home/runner/.deno/bin/deno'
+    except:
+        return '/home/runner/.deno/bin/deno'
+
 def get_youtube_service():
     creds = Credentials(
         token=None,
@@ -34,13 +43,14 @@ def get_youtube_service():
 
 def fetch_channel_videos():
     print(f"Cookies file exists: {os.path.exists(COOKIES_PATH)}")
+    deno_bin = get_deno_path()
     ydl_opts = {
         'extract_flat': True,
         'skip_download': True,
         'socket_timeout': 60,
-        'cookiefile': COOKIES_PATH,  # 'cookies' ki jagah 'cookiefile' standard parameter hai
+        'cookiefile': COOKIES_PATH,
         'js_runtimes': {
-            'deno': {'path': '/home/runner/.deno/bin/deno'}  # Explicit path taaki mil jaye
+            'deno': {'path': deno_bin}
         },
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
@@ -61,13 +71,14 @@ async def generate_voiceover(text):
 
 def process_and_upload(video_url, title):
     print(f"Downloading video: {video_url}")
+    deno_bin = get_deno_path()
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4/best',
         'outtmpl': 'source_video.mp4',
         'noplaylist': True,
         'cookiefile': COOKIES_PATH,
         'js_runtimes': {
-            'deno': {'path': '/home/runner/.deno/bin/deno'}
+            'deno': {'path': deno_bin}
         },
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
