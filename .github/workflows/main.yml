@@ -1,14 +1,11 @@
 name: YouTube Auto Shorts Bot
-
 on:
   schedule:
     - cron: '0 9 * * *'
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,7 +18,11 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          # yt-dlp's EJS system requires Deno >= 2.3.0.
+          # v1.x installs fine but yt-dlp silently refuses to use it,
+          # which is what was causing "No supported JavaScript runtime
+          # could be found" even though `deno --version` worked.
+          deno-version: v2.x
 
       - name: Verify Deno
         run: deno --version
@@ -36,6 +37,12 @@ jobs:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          # Optional — only needed if YouTube keeps blocking the
+          # runner's IP with "Sign in to confirm you're not a bot"
+          # even after cookies + JS runtime are working correctly.
+          # Add YT_PROXY_URL as a repo secret, e.g.
+          # http://user:pass@residential-proxy-host:port
+          YT_PROXY_URL: ${{ secrets.YT_PROXY_URL }}
         run: |
           export PATH=$PATH:/home/runner/.deno/bin
           python main.py
