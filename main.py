@@ -14,7 +14,7 @@ STATE_FILE = "last_processed.txt"
 OUTPUT_VIDEO = "final_short.mp4"
 OUTPUT_AUDIO = "voiceover.mp3"
 
-# Absolute path for cookies to avoid missing file errors
+# Absolute path for cookies
 COOKIES_PATH = os.path.abspath("cookies.txt")
 
 # YouTube API Setup using environment variables
@@ -38,9 +38,9 @@ def fetch_channel_videos():
         'extract_flat': True,
         'skip_download': True,
         'socket_timeout': 60,
-        'cookies': COOKIES_PATH,
+        'cookiefile': COOKIES_PATH,  # 'cookies' ki jagah 'cookiefile' standard parameter hai
         'js_runtimes': {
-            'deno': {'path': 'deno'}
+            'deno': {'path': '/home/runner/.deno/bin/deno'}  # Explicit path taaki mil jaye
         },
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
@@ -65,9 +65,9 @@ def process_and_upload(video_url, title):
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4/best',
         'outtmpl': 'source_video.mp4',
         'noplaylist': True,
-        'cookies': COOKIES_PATH,
+        'cookiefile': COOKIES_PATH,
         'js_runtimes': {
-            'deno': {'path': 'deno'}
+            'deno': {'path': '/home/runner/.deno/bin/deno'}
         },
         'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
