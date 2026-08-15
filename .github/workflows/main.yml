@@ -37,11 +37,14 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: |
+          export PATH=$PATH:/home/runner/.deno/bin
           python main.py
 
       - name: Commit and push state update
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # cookies.txt ko restore karein taaki git status clean rahe aur error na aaye
+          git checkout cookies.txt || true
           git add last_processed.txt
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update progress state [skip ci]" && git push)
