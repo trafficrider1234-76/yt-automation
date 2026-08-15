@@ -18,6 +18,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Deno install karne ke liye official action add kiya gaya hai
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
       - name: Verify Deno
         run: deno --version
 
