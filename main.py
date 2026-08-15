@@ -36,7 +36,10 @@ def fetch_channel_videos():
         'skip_download': True,
         'socket_timeout': 60,
         'cookies': 'cookies.txt',
-        'js_runtimes': {'node': {}}, # Node.js runtime enable kiya gaya hai
+        'js_runtimes': {
+            'node': {'path': 'node'}
+        },
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
     with YoutubeDL(ydl_opts) as ydl:
         try:
@@ -60,7 +63,10 @@ def process_and_upload(video_url, title):
         'outtmpl': 'source_video.mp4',
         'noplaylist': True,
         'cookies': 'cookies.txt',
-        'js_runtimes': {'node': {}}, # Node.js runtime enable kiya gaya hai
+        'js_runtimes': {
+            'node': {'path': 'node'}
+        },
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
