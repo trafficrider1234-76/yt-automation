@@ -1,6 +1,5 @@
 yt-dlp[default]
-moviepy==1.0.3
+moviepy
 edge-tts
+google-auth
 google-api-python-client
-google-auth-oauthlib
-google-auth-httplib2
