@@ -18,10 +18,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Verify Deno
+        run: deno --version
 
       - name: Install dependencies
         run: |
@@ -34,7 +32,6 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: |
-          export PATH=$PATH:$(which node)
           python main.py
 
       - name: Commit and push state update
