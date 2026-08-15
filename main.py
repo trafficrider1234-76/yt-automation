@@ -8,8 +8,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Configuration (Channel ka direct videos playlist URL use karein)
-CHANNEL_URL = "https://www.youtube.com/playlist?list=UULF_W63SgiubucAOXjKPLJAxA" # MysteryRecapped upload playlist
+# Configuration - Channel handle use karein taaki playlist error na aaye
+CHANNEL_URL = "https://www.youtube.com/@MysteryRecapped"
 QUEUE_FILE = "queue.json"
 STATE_FILE = "last_processed.txt"
 OUTPUT_VIDEO = "final_short.mp4"
@@ -32,13 +32,14 @@ def get_youtube_service():
 
 def fetch_channel_videos():
     ydl_opts = {
-        'extract_flat': 'in_playlist',
+        'extract_flat': True,
         'skip_download': True,
-        'socket_timeout': 30,
+        'socket_timeout': 60,
     }
     with YoutubeDL(ydl_opts) as ydl:
         try:
-            result = ydl.extract_info(CHANNEL_URL, download=False)
+            # Channel ke videos tab se direct list fetch karein
+            result = ydl.extract_info(f"{CHANNEL_URL}/videos", download=False)
             if 'entries' in result:
                 videos = [entry['url'] for entry in result['entries'] if entry.get('url')]
                 # Purani se nayi video (Oldest to Newest) ke liye reverse karein
