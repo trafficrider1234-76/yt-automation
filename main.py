@@ -8,8 +8,8 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Configuration - Channel handle use karein taaki playlist error na aaye
-CHANNEL_URL = "https://www.youtube.com/@MysteryRecapped"
+# Configuration - Channel ID use ki gayi hai taaki 404 error khatam ho jaye
+CHANNEL_URL = "https://www.youtube.com/channel/UC9-y-6csu5WGm29I7JiwpnA"
 QUEUE_FILE = "queue.json"
 STATE_FILE = "last_processed.txt"
 OUTPUT_VIDEO = "final_short.mp4"
@@ -38,7 +38,7 @@ def fetch_channel_videos():
     }
     with YoutubeDL(ydl_opts) as ydl:
         try:
-            # Channel ke videos tab se direct list fetch karein
+            # Channel videos tab
             result = ydl.extract_info(f"{CHANNEL_URL}/videos", download=False)
             if 'entries' in result:
                 videos = [entry['url'] for entry in result['entries'] if entry.get('url')]
