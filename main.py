@@ -8,7 +8,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# Configuration - Channel ID use ki gayi hai taaki 404 error khatam ho jaye
+# Configuration
 CHANNEL_URL = "https://www.youtube.com/channel/UC9-y-6csu5WGm29I7JiwpnA"
 QUEUE_FILE = "queue.json"
 STATE_FILE = "last_processed.txt"
@@ -35,14 +35,13 @@ def fetch_channel_videos():
         'extract_flat': True,
         'skip_download': True,
         'socket_timeout': 60,
+        'cookies': 'cookies.txt', # Yahan bhi cookies add ki gayi hain
     }
     with YoutubeDL(ydl_opts) as ydl:
         try:
-            # Channel videos tab
             result = ydl.extract_info(f"{CHANNEL_URL}/videos", download=False)
             if 'entries' in result:
                 videos = [entry['url'] for entry in result['entries'] if entry.get('url')]
-                # Purani se nayi video (Oldest to Newest) ke liye reverse karein
                 videos.reverse()
                 return videos
         except Exception as e:
@@ -58,7 +57,8 @@ def process_and_upload(video_url, title):
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4/best',
         'outtmpl': 'source_video.mp4',
-        'noplaylist': True
+        'noplaylist': True,
+        'cookies': 'cookies.txt', # Download ke liye cookies pass ki gayi hain
     }
     with YoutubeDL(ydl_opts) as ydl:
         ydl.download([video_url])
@@ -71,7 +71,6 @@ def process_and_upload(video_url, title):
     video = VideoFileClip("source_video.mp4").subclip(0, min(58, VideoFileClip("source_video.mp4").duration))
     audio = AudioFileClip(OUTPUT_AUDIO)
     
-    # Audio set karein
     final_clip = video.set_audio(audio)
     final_clip.write_videofile(OUTPUT_VIDEO, codec="libx264", audio_codec="aac", fps=30)
 
@@ -82,7 +81,7 @@ def process_and_upload(video_url, title):
             "title": f"{title[:80]} #shorts",
             "description": "Auto-generated cinematic recap short.",
             "tags": ["shorts", "movierecap", "viral"],
-            "categoryId": "24" # Entertainment
+            "categoryId": "24"
         },
         "status": {
             "privacyStatus": "public",
@@ -99,7 +98,6 @@ def process_and_upload(video_url, title):
     response = request.execute()
     print(f"Uploaded successfully! Video ID: {response.get('id')}")
 
-    # Cleanup local files
     for f in ["source_video.mp4", OUTPUT_AUDIO, OUTPUT_VIDEO]:
         if os.path.exists(f):
             os.remove(f)
@@ -110,7 +108,6 @@ def main():
         print("No videos found.")
         return
 
-    # Load last processed index
     last_index = 0
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
@@ -127,7 +124,6 @@ def main():
 
     try:
         process_and_upload(target_url, f"Viral Recap #{last_index + 1}")
-        # Update state
         with open(STATE_FILE, "w") as f:
             f.write(str(last_index + 1))
     except Exception as e:
